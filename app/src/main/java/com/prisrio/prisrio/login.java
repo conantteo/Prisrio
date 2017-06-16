@@ -35,7 +35,7 @@ public class login extends AppCompatActivity {
     CallbackManager callbackManager;
     AccessToken accessToken;
 
-    private CallbackManager callbackManager;
+   // private CallbackManager callbackManager;
     //private AccessTokenTracker accessTokenTracker;
     //private ProfileTracker profileTracker;
     private LoginButton loginButton;
