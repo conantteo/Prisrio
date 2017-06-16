@@ -32,7 +32,6 @@ public class login extends AppCompatActivity {
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
-        var test;
 
         LoginButton authButton = (LoginButton)this.findViewById(R.id.login_button);
         authButton.setReadPermissions(Arrays.asList("user_status"));
