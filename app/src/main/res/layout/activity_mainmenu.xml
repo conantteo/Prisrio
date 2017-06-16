@@ -6,4 +6,11 @@
     android:layout_height="match_parent"
     tools:context="com.prisrio.prisrio.mainmenu">
 
+    <Button
+        android:id="@+id/bn_friends"
+        android:layout_width="137dp"
+        android:layout_height="142dp"
+        android:text="FRIENDS"
+        tools:layout_editor_absoluteX="34dp"
+        tools:layout_editor_absoluteY="50dp" />
 </android.support.constraint.ConstraintLayout>
