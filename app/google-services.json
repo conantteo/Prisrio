@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "556769344228",
+    "firebase_url": "https://prisrio-5d247.firebaseio.com",
+    "project_id": "prisrio-5d247",
+    "storage_bucket": "prisrio-5d247.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556769344228:android:8221ebbe448fc361",
+        "android_client_info": {
+          "package_name": "com.prisrio.prisrio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "556769344228-9c51sjmern7lu2dgfsffv1ppd2v3rboj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.prisrio.prisrio",
+            "certificate_hash": "91c16de8eeb905ec5551465445943be7707a0440"
+          }
+        },
+        {
+          "client_id": "556769344228-peu4ni1ia6eodn6ifegmqsm0ls9c636g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBn7wosrhq9jyBu7Vp55mVn-HLOy_h40UY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "556769344228-peu4ni1ia6eodn6ifegmqsm0ls9c636g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

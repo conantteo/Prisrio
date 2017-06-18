@@ -21,6 +21,8 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,10 +41,21 @@ public class login extends AppCompatActivity {
     //private AccessTokenTracker accessTokenTracker;
     //private ProfileTracker profileTracker;
     private LoginButton loginButton;
-    private String firstName,lastName, email,birthday,gender;
+    private String id,firstName,lastName, email,birthday,gender;
     private URL profilePicture;
     private String userId;
     private String TAG = "LoginActivity";
+
+    //FACEBOOK USER DETAILS
+    public static final String FB_NAME = "name";
+    public static final String FB_GENDER = "gender";
+    public static final String FB_ID = "id";
+    public static final String FB_PROFILEIMAGE = "profileimage";
+
+    //FIREBASE
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,12 +82,12 @@ public class login extends AppCompatActivity {
                         GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                             @Override
                             public void onCompleted(JSONObject object, GraphResponse response) {
-                              //  Log.e(TAG,object.toString());
-                              //  Log.e(TAG,response.toString());
 
                                 try {
                                     userId = object.getString("id");
                                     profilePicture = new URL("https://graph.facebook.com/" + userId + "/picture?width=500&height=500");
+                                    if (object.has("id"))
+                                        id = object.getString("id");
                                     if(object.has("first_name"))
                                         firstName = object.getString("first_name");
                                     if(object.has("last_name"))
@@ -86,10 +99,28 @@ public class login extends AppCompatActivity {
                                     if (object.has("gender"))
                                         gender = object.getString("gender");
 
-                                    Intent main = new Intent(login.this,MainActivity.class);
-                                    main.putExtra("name",firstName);
-                                    main.putExtra("surname",lastName);
-                                    main.putExtra("imageUrl",profilePicture.toString());
+                                    Intent main = new Intent(login.this,mainmenu.class);
+                                    main.putExtra(FB_NAME, firstName);
+                                    main.putExtra(FB_GENDER, gender);
+                                    main.putExtra(FB_ID, id);
+                                    main.putExtra(FB_PROFILEIMAGE, profilePicture.toString());
+
+                                    //main.putExtra("name",firstName);
+                                    //main.putExtra("surname",lastName);
+                                   // main.putExtra("imageUrl",profilePicture.toString());
+
+
+                                    // creating user object
+                                    User user = new User(firstName);
+
+                                    // pushing user to 'users' node using the userId
+                                    mDatabase.child(userId).setValue(user);
+
+
+                                    Log.e(TAG,response.toString());
+                                    Log.e(TAG,id);
+
+
                                     startActivity(main);
                                     finish();
                                 } catch (JSONException e) {
