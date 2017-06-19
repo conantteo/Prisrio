@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "556769344228-6st92uk92shlisc54gq9j8hoogq2pl9i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.prisrio.prisrio",
+            "certificate_hash": "c5379f03e3854b355ef8f4335f15c58af0bcb28b"
+          }
+        },
+        {
           "client_id": "556769344228-9c51sjmern7lu2dgfsffv1ppd2v3rboj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
