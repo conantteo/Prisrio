@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -12,11 +14,15 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.graphics.Typeface;
 
@@ -62,7 +68,42 @@ public class mainmenu extends AppCompatActivity {
         textView.setLetterSpacing(1.2f);
         textView.setText(fbName);
 
-         imageView = (ImageView) findViewById(R.id.img_profile);
+        // Get the ActionBar
+        ActionBar ab = getSupportActionBar();
+
+        // Set the ActionBar background color
+        ab.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#7FC0C0C0")));
+
+        // Create a TextView programmatically.
+        TextView tv = new TextView(getApplicationContext());
+
+
+
+        // Set text to display in TextView
+        // This will set the ActionBar title text
+        tv.setText("PRISRIO");
+
+        // Set the text color of TextView
+        // This will change the ActionBar title text color
+        tv.setTextColor(Color.parseColor("#FFF5EE"));
+
+        // Center align the ActionBar title
+        tv.setGravity(Gravity.CENTER);
+
+        // Set the serif font for TextView text
+        // This will change ActionBar title text font
+        tv.setTypeface(ralewayFont);
+        tv.setLetterSpacing(1.2f);
+        ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+
+        //TextView customView = (TextView) LayoutInflater.from(this).inflate(R.layout.actionbar_custom_title_view_centered,null);
+        ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
+
+        // Finally, set the newly created TextView as ActionBar custom view
+        ab.setCustomView(tv,params);
+
+
+        imageView = (ImageView) findViewById(R.id.img_profile);
 
         // show The Image in a ImageView
         new DownloadImageTask(imageView)
