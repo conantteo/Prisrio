@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.graphics.Typeface;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -25,6 +27,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +56,10 @@ public class mainmenu extends AppCompatActivity {
 
         // Capture the layout's TextView and set the string as its text
         TextView textView = (TextView) findViewById(R.id.lb_name);
+        Typeface ralewayFont = Typeface.createFromAsset(getAssets(), "fonts/RalewayRegular.ttf");
+        textView.setTypeface(ralewayFont);
+        //requires API 5.0
+        textView.setLetterSpacing(1.2f);
         textView.setText(fbName);
 
          imageView = (ImageView) findViewById(R.id.img_profile);
@@ -88,7 +95,7 @@ public class mainmenu extends AppCompatActivity {
     }
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
-
+    public Uri imageUri;
     private void dispatchTakePictureIntent() {
 
     }
@@ -102,7 +109,17 @@ public class mainmenu extends AppCompatActivity {
         }else{
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                String filename = Environment.getExternalStorageDirectory().getPath() + "/folder/testfile.jpg";
+                 imageUri = Uri.fromFile(new File(filename));
+
+                // start default camera
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                /*
+                cameraIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,
+                        imageUri);
+                */
+                startActivityForResult (cameraIntent, REQUEST_IMAGE_CAPTURE);
+                //startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
         }
     }
@@ -113,6 +130,7 @@ public class mainmenu extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             imageView.setImageBitmap(imageBitmap);
+            //imageView.setImageURI(imageUri);
 
             // Get the data from an ImageView as bytes
             imageView.setDrawingCacheEnabled(true);
@@ -123,7 +141,9 @@ public class mainmenu extends AppCompatActivity {
             byte[] dataBtye = baos.toByteArray();
 
 
+            //
             // Create a reference to "mountains.jpg"
+            // Create a random filename
             String fileName = UUID.randomUUID().toString();
             StorageReference mountainsRef = storageRef.child(fileName+".jpg");
 
