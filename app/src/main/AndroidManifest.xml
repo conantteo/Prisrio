@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera" />
 
     <application
@@ -27,6 +28,7 @@
 
         <activity android:name=".login" />
         <activity
+
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
@@ -42,7 +44,11 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".mainmenu"></activity>
+        <activity android:name=".mainmenu" />
+        <activity
+            android:name=".postphoto"
+            android:label="POST PHOTO">
+        </activity>
     </application>
 
 </manifest>
