@@ -2,5 +2,10 @@
     <string name="app_name">Prisrio</string>
     <string name="facebook_app_id">240551479762722</string>
     <string name="fb_login_protocol_scheme">fb240551479762722</string>
+    <string name="title_activity_mainmenu2">mainmenu2</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_bottomtest">bottomtest</string>
 
 </resources>

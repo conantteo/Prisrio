@@ -1,17 +1,17 @@
 package com.prisrio.prisrio;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.facebook.AccessToken;
@@ -21,7 +21,6 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -43,9 +42,6 @@ import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 public class login extends AppCompatActivity {
     CallbackManager callbackManager;
@@ -74,25 +70,43 @@ public class login extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    private VideoView videoView;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         //set video background
-        VideoView videoView = (VideoView) findViewById(R.id.vv_loginVideo);
+        videoView = (VideoView) findViewById(R.id.vv_loginVideo);
         Uri uri = Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.loginvideo);
 
         videoView.setVideoURI(uri);
-        videoView.start();
 
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
                 mediaPlayer.setLooping(true);
-
+                videoView.start();
             }
         });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window w = getWindow(); // in Activity's onCreate() for instance
+            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }
+
+        // Capture the layout's TextView and set the string as its text
+
+        TextView lb_description1 = (TextView) findViewById(R.id.lb_login_description);
+        TextView lb_description2 = (TextView) findViewById(R.id.lb_login_description2);
+        Typeface ralewayFont = Typeface.createFromAsset(getAssets(), "fonts/RalewayRegular.ttf");
+        lb_description1.setTypeface(ralewayFont);
+        lb_description2.setTypeface(ralewayFont);
+        //requires API 5.0
+        lb_description1.setLetterSpacing(1f);
+        //lb_description2.setLetterSpacing(1f);
+
+
 
         //To get access token from application
         FacebookSdk.sdkInitialize(this.getApplicationContext());
@@ -132,7 +146,6 @@ public class login extends AppCompatActivity {
 
         authButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
-
                         @Override
                         public void onSuccess(LoginResult loginResult) {
                             // App code
@@ -150,10 +163,9 @@ public class login extends AppCompatActivity {
                             // App code
                         }
                     });
-
-
-
-
+        if(isLoggedIn()==true){
+            facebookGraph();
+        }
     }
 
     public void facebookGraph(){
@@ -217,13 +229,8 @@ public class login extends AppCompatActivity {
                         }
                     });
 
-
-
-
-
                     Log.e(TAG,response.toString());
                     Log.e(TAG,id);
-
 
                     startActivity(main);
 

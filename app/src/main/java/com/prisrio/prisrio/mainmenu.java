@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -17,17 +18,27 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.graphics.Typeface;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -47,12 +58,45 @@ public class mainmenu extends AppCompatActivity {
     // Create a storage reference from our app
     StorageReference storageRef = FirebaseStorage.getInstance().getReference();
 
+    CallbackManager callbackManager;
+    LoginManager loginManager;
 
+    AccessToken accessToken;
+
+    //FIREBASE
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
+
+    //FIREBASE AUTHENTICATION
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
+        mAuth = FirebaseAuth.getInstance();
+        //To get access token from application
+        FacebookSdk.sdkInitialize(this.getApplicationContext());
+        //accessToken = AccessToken.getCurrentAccessToken();
+
+        callbackManager = CallbackManager.Factory.create();
+        loginManager = LoginManager.getInstance();
+
+
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorGreyishBlack));
+        }
+
 
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
@@ -68,39 +112,7 @@ public class mainmenu extends AppCompatActivity {
         textView.setLetterSpacing(1.2f);
         textView.setText(fbName);
 
-        // Get the ActionBar
-        ActionBar ab = getSupportActionBar();
 
-        // Set the ActionBar background color
-        ab.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#7FC0C0C0")));
-
-        // Create a TextView programmatically.
-        TextView tv = new TextView(getApplicationContext());
-
-
-
-        // Set text to display in TextView
-        // This will set the ActionBar title text
-        tv.setText("PRISRIO");
-
-        // Set the text color of TextView
-        // This will change the ActionBar title text color
-        tv.setTextColor(Color.parseColor("#FFF5EE"));
-
-        // Center align the ActionBar title
-        tv.setGravity(Gravity.CENTER);
-
-        // Set the serif font for TextView text
-        // This will change ActionBar title text font
-        tv.setTypeface(ralewayFont);
-        tv.setLetterSpacing(1.2f);
-        ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-
-        //TextView customView = (TextView) LayoutInflater.from(this).inflate(R.layout.actionbar_custom_title_view_centered,null);
-        ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
-
-        // Finally, set the newly created TextView as ActionBar custom view
-        ab.setCustomView(tv,params);
 
 
         imageView = (ImageView) findViewById(R.id.img_profile);
@@ -144,6 +156,9 @@ public class mainmenu extends AppCompatActivity {
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
 
     public void goToCamera(View view) {
+        Intent main = new Intent(mainmenu.this,postphoto.class);
+        startActivity(main);
+        /*
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA}, 1);
@@ -155,14 +170,10 @@ public class mainmenu extends AppCompatActivity {
 
                 // start default camera
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                /*
-                cameraIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,
-                        imageUri);
-                */
+
                 startActivityForResult (cameraIntent, REQUEST_IMAGE_CAPTURE);
-                //startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
-        }
+        }*/
     }
 
     @Override
@@ -202,5 +213,51 @@ public class mainmenu extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    /*
+    public void createToolbar (){
+        // Get the ActionBar
+        ActionBar ab = getSupportActionBar();
+        // Set the ActionBar background color
+        // ab.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#7FC0C0C0")));
+
+        // Create a TextView programmatically.
+        TextView tv = new TextView(getApplicationContext());
+        ImageView imageView = new ImageView(this);
+        int id = getResources().getIdentifier("appbarlogo", "drawable", getPackageName());
+        imageView.setImageResource(id);
+
+        // Set text to display in TextView
+        // This will set the ActionBar title text
+        tv.setText("PRISRIO");
+
+        // Set the text color of TextView
+        // This will change the ActionBar title text color
+        tv.setTextColor(Color.parseColor("#212121"));
+
+        // Center align the ActionBar title
+        tv.setGravity(Gravity.CENTER);
+
+        // Set the serif font for TextView text
+        // This will change ActionBar title text font
+        Typeface ralewayFont = Typeface.createFromAsset(getAssets(), "fonts/RalewayRegular.ttf");
+        tv.setTypeface(ralewayFont);
+        tv.setLetterSpacing(1.2f);
+        ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+
+        //TextView customView = (TextView) LayoutInflater.from(this).inflate(R.layout.actionbar_custom_title_view_centered,null);
+        ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
+
+        // Finally, set the newly created TextView as ActionBar custom view
+        ab.setCustomView(imageView,params);
+    }
+    */
+
+    public void logout(View view){
+        LoginManager.getInstance().logOut();
+        Intent main = new Intent(mainmenu.this,login.class);
+        startActivity(main);
+        finish();
     }
 }
