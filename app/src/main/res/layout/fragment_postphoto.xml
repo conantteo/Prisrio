@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent">
+    tools:context="com.prisrio.prisrio.postphoto">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_below="@+id/my_toolbar"
+        android:layout_above="@+id/bottom_navigation"
+        android:background="@drawable/mainbackground"
+        android:scrollbars="none"
+        android:overScrollMode="never">
+
+    <!-- TODO: Update blank fragment layout -->
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/mainpanel">
+
+        <ImageView
+            android:id="@+id/img_postphoto_snappicture"
+            android:layout_width="297dp"
+            android:layout_height="208dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/photoicon" />
+
+        <Button
+            android:id="@+id/bn_postphoto_camera"
+            android:layout_width="314dp"
+            android:layout_height="47dp"
+            android:layout_marginTop="240dp"
+            android:onClick="takePicture"
+            android:text="SNAP"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/ddl_postphoto_foodcategory"
+            android:layout_width="306dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="339dp"
+            android:background="#90FFFFFF"
+            android:textAlignment="center"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/bn_postphoto_post"
+            android:layout_width="314dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="491dp"
+            android:onClick="postPhoto"
+            android:text="POST"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/tb_postphoto_caption"
+            android:layout_width="310dp"
+            android:layout_height="68dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="407dp"
+            android:background="#90FFFFFF"
+            android:ems="10"
+            android:inputType="textMultiLine"
+            android:textColorLink="#000000"
+            android:textCursorDrawable="@null"
+
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/lb_postphoto_foodcategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="308dp"
+            android:text="Food Category"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/lb_postphoto_caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="379dp"
+            android:text="Caption"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+</FrameLayout>

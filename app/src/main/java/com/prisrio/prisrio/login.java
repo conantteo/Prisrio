@@ -57,10 +57,10 @@ public class login extends AppCompatActivity {
     private String TAG = "LoginActivity";
 
     //FACEBOOK USER DETAILS
-    public static final String FB_NAME = "name";
-    public static final String FB_GENDER = "gender";
-    public static final String FB_ID = "id";
-    public static final String FB_PROFILEIMAGE = "profileimage";
+    public static String FB_NAME = "name";
+    public static String FB_GENDER = "gender";
+    public static String FB_ID = "id";
+    public static String FB_PROFILEIMAGE = "profileimage";
 
     //FIREBASE
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -177,10 +177,13 @@ public class login extends AppCompatActivity {
                 try {
                     userId = object.getString("id");
                     profilePicture = new URL("https://graph.facebook.com/" + userId + "/picture?width=500&height=500");
+                    FB_PROFILEIMAGE = profilePicture.toString();
                     if (object.has("id"))
                         id = object.getString("id");
+                        FB_ID = id;
                     if(object.has("first_name"))
                         firstName = object.getString("first_name");
+                        FB_NAME = firstName;
                     if(object.has("last_name"))
                         lastName = object.getString("last_name");
                     if (object.has("email"))
@@ -189,12 +192,9 @@ public class login extends AppCompatActivity {
                         birthday = object.getString("birthday");
                     if (object.has("gender"))
                         gender = object.getString("gender");
+                        FB_GENDER = gender;
 
-                    Intent main = new Intent(login.this,mainmenu.class);
-                    main.putExtra(FB_NAME, firstName);
-                    main.putExtra(FB_GENDER, gender);
-                    main.putExtra(FB_ID, id);
-                    main.putExtra(FB_PROFILEIMAGE, profilePicture.toString());
+
 
                     //main.putExtra("name",firstName);
                     //main.putExtra("surname",lastName);
@@ -232,6 +232,11 @@ public class login extends AppCompatActivity {
                     Log.e(TAG,response.toString());
                     Log.e(TAG,id);
 
+                    Intent main = new Intent(login.this,mainmenu.class);
+                    main.putExtra(FB_NAME, firstName);
+                    main.putExtra(FB_GENDER, gender);
+                    main.putExtra(FB_ID, id);
+                    main.putExtra(FB_PROFILEIMAGE, profilePicture.toString());
                     startActivity(main);
 
                     //This remove the logout button for now

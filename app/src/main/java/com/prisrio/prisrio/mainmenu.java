@@ -1,5 +1,8 @@
 package com.prisrio.prisrio;
 
+import android.os.StrictMode;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -13,7 +16,10 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.internal.BottomNavigationItemView;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,13 +28,18 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.graphics.Typeface;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -37,8 +48,11 @@ import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -48,6 +62,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class mainmenu extends AppCompatActivity {
@@ -63,16 +78,24 @@ public class mainmenu extends AppCompatActivity {
 
     AccessToken accessToken;
 
-    //FIREBASE
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
+
 
     //FIREBASE AUTHENTICATION
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    //FIREBASE
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    //DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
+    DatabaseReference databaseRef = database.getReference("foodcategory");
+    DatabaseReference databasePhoto = FirebaseDatabase.getInstance().getReference("photos");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
         mAuth = FirebaseAuth.getInstance();
@@ -84,13 +107,46 @@ public class mainmenu extends AppCompatActivity {
         loginManager = LoginManager.getInstance();
 
 
-
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        //Bottom Navigation Bar
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item){
+                switch(item.getItemId()){
+                    case R.id.bottom_navigation_photo:{
+                        //Toast.makeText(mainmenu.this, "Action Add Clicked", Toast.LENGTH_SHORT).show();
+                        //Intent main = new Intent(mainmenu.this,postphoto.class);
+                        //startActivity(main);
+
+                        Fragment fragment = new postphoto();
+                        FragmentManager fm = getSupportFragmentManager();
+                        FragmentTransaction ft = fm.beginTransaction();
+                        ft.replace(R.id.fragment, fragment);
+                        ft.commit();
+                        break;
+                    }
+                    case R.id.bottom_navigation_profile:{
+                        //Toast.makeText(mainmenu.this, "Action Add Clicked", Toast.LENGTH_SHORT).show();
+                        //Intent main = new Intent(mainmenu.this,postphoto.class);
+                        //startActivity(main);
+
+                        Fragment fragment = new profile();
+                        FragmentManager fm = getSupportFragmentManager();
+                        FragmentTransaction ft = fm.beginTransaction();
+                        ft.replace(R.id.fragment, fragment);
+                        ft.commit();
+                        break;
+                    }
+                }
+                return true;
+            }
+        });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -98,12 +154,14 @@ public class mainmenu extends AppCompatActivity {
         }
 
 
+
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
-        String fbName = intent.getStringExtra(login.FB_NAME);
-        String fbID = intent.getStringExtra(login.FB_ID);
-        String fbProfileImage = intent.getStringExtra(login.FB_PROFILEIMAGE);
+        //String fbName = intent.getStringExtra(login.FB_NAME);
+        // fbID = intent.getStringExtra(login.FB_ID);
+        //String fbProfileImage = intent.getStringExtra(login.FB_PROFILEIMAGE);
 
+        /*
         // Capture the layout's TextView and set the string as its text
         TextView textView = (TextView) findViewById(R.id.lb_name);
         Typeface ralewayFont = Typeface.createFromAsset(getAssets(), "fonts/RalewayRegular.ttf");
@@ -120,6 +178,7 @@ public class mainmenu extends AppCompatActivity {
         // show The Image in a ImageView
         new DownloadImageTask(imageView)
                 .execute(fbProfileImage);
+                */
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
@@ -149,8 +208,23 @@ public class mainmenu extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     public Uri imageUri;
-    private void dispatchTakePictureIntent() {
 
+    public void takePicture(View view) {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA}, 1);
+        }else{
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(this.getPackageManager()) != null) {
+                //String filename = Environment.getExternalStorageDirectory().getPath() + "/folder/testfile.jpg";
+                // Uri imageUri = Uri.fromFile(new File(filename));
+
+                // start default camera
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+
+                startActivityForResult (cameraIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
     }
 
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
@@ -181,38 +255,15 @@ public class mainmenu extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            imageView.setImageBitmap(imageBitmap);
+            ImageView img_snapppicture = (ImageView) findViewById(R.id.img_postphoto_snappicture); //
+            img_snapppicture.setImageBitmap(imageBitmap);
             //imageView.setImageURI(imageUri);
 
-            // Get the data from an ImageView as bytes
-            imageView.setDrawingCacheEnabled(true);
-            imageView.buildDrawingCache();
-            Bitmap bitmap = imageView.getDrawingCache();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] dataBtye = baos.toByteArray();
 
 
-            //
-            // Create a reference to "mountains.jpg"
-            // Create a random filename
-            String fileName = UUID.randomUUID().toString();
-            StorageReference mountainsRef = storageRef.child(fileName+".jpg");
 
-            UploadTask uploadTask = mountainsRef.putBytes(dataBtye);
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                    //Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                }
-            });
         }
+
     }
 
     /*
@@ -260,4 +311,57 @@ public class mainmenu extends AppCompatActivity {
         startActivity(main);
         finish();
     }
+
+    public void postPhoto(View view){
+
+        //Get information from form
+        EditText tb_postphoto_caption = (EditText) findViewById(R.id.tb_postphoto_caption);
+        final String caption = tb_postphoto_caption.getText().toString();
+
+        Spinner ddl_postphoto_foodcategory = (Spinner) findViewById(R.id.ddl_postphoto_foodcategory);
+        final String foodCategory = ddl_postphoto_foodcategory.getSelectedItem().toString();
+
+
+
+        ImageView img_snapppicture = (ImageView) findViewById(R.id.img_postphoto_snappicture); //
+        // Get the data from an ImageView as bytes
+        img_snapppicture.setDrawingCacheEnabled(true);
+        img_snapppicture.buildDrawingCache();
+        Bitmap bitmap = img_snapppicture.getDrawingCache();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] dataBtye = baos.toByteArray();
+
+
+        //
+        // Create a reference to "mountains.jpg"
+        // Create a random filename
+        final String fileName = UUID.randomUUID().toString();
+        StorageReference mountainsRef = storageRef.child(fileName+".jpg");
+
+        UploadTask uploadTask = mountainsRef.putBytes(dataBtye);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                //Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                //post photo
+
+                //Insert into Database
+                Photo photo = new Photo(foodCategory, caption, login.FB_ID);
+                databasePhoto.child(fileName).setValue(photo);
+
+                Toast.makeText(mainmenu.this, "Your post is uploaded!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+
+
 }

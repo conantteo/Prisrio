@@ -49,10 +49,6 @@
             android:name=".mainmenu"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".postphoto"
-            android:label="POST PHOTO"
-            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

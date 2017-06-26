@@ -38,75 +38,21 @@
     app:itemBackground="@color/colorPrimary"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toRightOf="parent"
+    app:itemIconTint="@drawable/nav_item_color_state"
+    app:itemTextColor="@drawable/nav_item_color_state"
     app:menu="@menu/navigation" />
     <include
         layout="@layout/toolbarheader" />
 
     <!-- To make the scrollview layout below, below app bar-->
-    <ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-
-    android:layout_below="@+id/my_toolbar"
-    android:layout_above="@+id/bottom_navigation"
-    android:background="@drawable/mainbackground"
-    android:scrollbars="none"
-    android:overScrollMode="never">
-
-<android.support.constraint.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
 
 
-    <TextView
-        android:id="@+id/lb_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="0dp"
-        android:layout_marginLeft="0dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginRight="0dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.622"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="0dp"
-        app:layout_constraintVertical_bias="0.372" />
-
-    <ImageView
-        android:id="@+id/img_profile"
-        android:layout_width="97dp"
-        android:layout_height="104dp"
-        app:srcCompat="@drawable/com_facebook_profile_picture_blank_square"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="0dp"
-        android:layout_marginLeft="0dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginRight="0dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.094"
-        app:layout_constraintVertical_bias="0.33" />
-
-    <Button
-        android:id="@+id/bn_logout"
-        android:layout_width="331dp"
-        android:layout_height="144dp"
-        android:onClick="logout"
-        android:text="Logout"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="800dp"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="0.513" />
-
-
-
-</android.support.constraint.ConstraintLayout>
-</ScrollView>
-
+    <fragment
+        android:id="@+id/fragment"
+        android:name="com.prisrio.prisrio.profile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/my_toolbar"
+        android:layout_above="@+id/bottom_navigation"
+        />
 </RelativeLayout>
