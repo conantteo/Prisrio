@@ -94,6 +94,8 @@ public class mainmenu extends AppCompatActivity {
     //FIREBASE AUTHENTICATION
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private Double locationLongitude=0.0;
+    private Double locationLatitude=0.0;
 
     //FIREBASE
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -124,12 +126,32 @@ public class mainmenu extends AppCompatActivity {
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        //LOAD DEFAULT FRAGMENT
+        Fragment fragment = new foodmatch();
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.fragment, fragment);
+        ft.commit();
+
         //Bottom Navigation Bar
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
+                    case R.id.bottom_navigation_home: {
+                        //Toast.makeText(mainmenu.this, "Action Add Clicked", Toast.LENGTH_SHORT).show();
+                        //Intent main = new Intent(mainmenu.this,postphoto.class);
+                        //startActivity(main);
+
+                        Fragment fragment = new foodmatch();
+                        FragmentManager fm = getSupportFragmentManager();
+                        FragmentTransaction ft = fm.beginTransaction();
+                        ft.replace(R.id.fragment, fragment);
+                        ft.commit();
+                        //getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                        break;
+                    }
                     case R.id.bottom_navigation_photo: {
                         //Toast.makeText(mainmenu.this, "Action Add Clicked", Toast.LENGTH_SHORT).show();
                         //Intent main = new Intent(mainmenu.this,postphoto.class);
@@ -197,8 +219,8 @@ public class mainmenu extends AppCompatActivity {
             public void onLocationChanged(Location location) {
                 Log.d("Tag","LOCATION : LAT" + location.getLatitude());
                 Log.d("Tag","LOCATION : LONG" + location.getLongitude());
-                double latitude = location.getLatitude();
-                double longitude = location.getLongitude();
+                Double latitude = location.getLatitude();
+                Double longitude = location.getLongitude();
                 List<Address> addresses = null;
 
                 try {
@@ -219,6 +241,8 @@ public class mainmenu extends AppCompatActivity {
                 TextView lb_location = (TextView) findViewById(R.id.lb_postphoto_location);
                 if(lb_location!=null) {
                     lb_location.setText(address);
+                    locationLongitude= longitude ;
+                    locationLatitude=latitude ;
                 }
             }
 
@@ -430,7 +454,7 @@ public class mainmenu extends AppCompatActivity {
                 //post photo
 
                 //Insert into Database
-                Photo photo = new Photo(foodCategory, caption, login.FB_ID,address,downloadUrl.toString());
+                Photo photo = new Photo(foodCategory, caption, login.FB_ID,address,locationLatitude,locationLongitude,downloadUrl.toString());
                 databasePhoto.child(fileName).setValue(photo);
 
                 Toast.makeText(mainmenu.this, "Your post is uploaded!", Toast.LENGTH_SHORT).show();

@@ -109,8 +109,10 @@ public class profile extends Fragment {
                         String address = (String) ds.child("address").getValue();
                         String foodCategory = (String) ds.child("foodCategory").getValue();
                         String author = (String) ds.child("author").getValue();
+                        Double locationLatitude =  (Double)ds.child("latitude").getValue();
+                        Double locationLongitude = (Double)ds.child("longitude").getValue();
                         Log.d("Tag","downloadURL test2: "+downloadURL);
-                        Photo photo = new Photo(foodCategory, caption, author, address, downloadURL);
+                        Photo photo = new Photo(foodCategory, caption, author, address,locationLatitude, locationLongitude,downloadURL);
                         photoArr.add(photo);
                         photosDownloadArr.add(downloadURL);
                     }

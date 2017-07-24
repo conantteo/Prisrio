@@ -47,12 +47,12 @@
     <!-- To make the scrollview layout below, below app bar-->
 
 
-    <fragment
+    <FrameLayout
         android:id="@+id/fragment"
-        android:name="com.prisrio.prisrio.profile"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/my_toolbar"
         android:layout_above="@+id/bottom_navigation"
+        android:background="@drawable/mainbackground"
         />
 </RelativeLayout>

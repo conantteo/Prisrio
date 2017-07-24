@@ -21,6 +21,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -141,7 +142,7 @@ public class login extends AppCompatActivity {
 
 
        // authButton.setReadPermissions(Arrays.asList("user_status","user_friends","email"));
-        authButton.setReadPermissions("email", "public_profile");
+        authButton.setReadPermissions("email", "public_profile","user_friends");
         //LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email","public_profile"));
 
         authButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -170,6 +171,21 @@ public class login extends AppCompatActivity {
 
     public void facebookGraph(){
         accessToken = AccessToken.getCurrentAccessToken();
+
+        /* make the API call */
+        new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+                "/me/friends",
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        /* handle the result */
+                        Log.e(TAG,response.toString());
+                    }
+                }
+        ).executeAsync();
+
         GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {

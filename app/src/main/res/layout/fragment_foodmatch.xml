@@ -1,13 +1,112 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent">
     tools:context="com.prisrio.prisrio.foodmatch">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+
+        <!-- TODO: Update blank fragment layout -->
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/mainpanel">
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="360dp"
+                android:layout_height="417dp"
+                app:srcCompat="@drawable/foodmatchbackground"
+                android:layout_marginLeft="0dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="-19dp" />
+
+            <ImageView
+                android:id="@+id/img_foodmatch_photo"
+                android:layout_width="319dp"
+                android:layout_height="220dp"
+                android:layout_marginTop="108dp"
+                app:layout_constraintHorizontal_bias="0.507"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/photoicon" />
+
+            <TextView
+                android:id="@+id/lb_foodmatch_caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="342dp"
+                android:text="caption"
+                app:layout_constraintHorizontal_bias="0.157"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/img_foodmatch_profile"
+                android:layout_width="49dp"
+                android:layout_height="50dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.158"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.04"
+                app:srcCompat="@drawable/com_facebook_profile_picture_blank_square"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/lb_foodmatch_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:text="author"
+                app:layout_constraintHorizontal_bias="0.367"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/lb_foodmatch_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="454dp"
+                android:text="location"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/bn_postphoto_post"
+                android:layout_width="67dp"
+                android:layout_height="67dp"
+                android:layout_marginTop="428dp"
+                android:background="@drawable/like"
+                android:onClick="postPhoto"
+                app:layout_constraintHorizontal_bias="0.899"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/bn_foodmatch_next"
+                android:layout_width="67dp"
+                android:layout_height="67dp"
+                android:layout_marginTop="428dp"
+                android:background="@drawable/cross"
+                android:onClick="postPhoto"
+                app:layout_constraintHorizontal_bias="0.104"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+
+
+
+        </android.support.constraint.ConstraintLayout>
 
 </FrameLayout>
