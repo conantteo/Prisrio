@@ -25,8 +25,12 @@ import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -46,14 +50,10 @@ public class profile extends Fragment {
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
     DatabaseReference databasePhoto = FirebaseDatabase.getInstance().getReference("photos");
 
+
     //FIREBASE AUTHENTICATION
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
-    // Create a storage reference from our app
-    FirebaseStorage storage = FirebaseStorage.getInstance();
-    StorageReference storageRef = storage.getReference();
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,37 +89,55 @@ public class profile extends Fragment {
         textView.setLetterSpacing(1.2f);
         textView.setText(fbName);
 
-        ArrayList<String> photosDownloadArr = new ArrayList();
+        final ArrayList<String> photosDownloadArr = new ArrayList();
+        final ArrayList<Photo> photoArr = new ArrayList();
+        /*
         int lettersIcon[] = {
                 R.drawable.appbarlogo, R.drawable.applogo2
         };
+        */
+        Query query = databasePhoto.orderByChild("author").equalTo(login.FB_ID);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
 
-        //photosDownloadArr.add("https://firebasestorage.googleapis.com/v0/b/prisrio-5d247.appspot.com/o/054f2d83-1e2a-4586-9ec1-6c7fc5e370c8.jpg?alt=media&token=68b26968-6bb1-4fb7-9a83-d1095de78aa3");
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        // do something with the individual
+                        String downloadURL = (String) ds.child("downloadURL").getValue();
+                        String caption = (String) ds.child("caption").getValue();
+                        String address = (String) ds.child("address").getValue();
+                        String foodCategory = (String) ds.child("foodCategory").getValue();
+                        String author = (String) ds.child("author").getValue();
+                        Log.d("Tag","downloadURL test2: "+downloadURL);
+                        Photo photo = new Photo(foodCategory, caption, author, address, downloadURL);
+                        photoArr.add(photo);
+                        photosDownloadArr.add(downloadURL);
+                    }
+                    GridView gridView = (GridView) view.findViewById(R.id.gv_profile_imagegallery);
+                    gridView.setAdapter(new profileGridViewAdapter(getActivity(), photosDownloadArr));
+                    //profileGridViewAdapter adapter = new profileGridViewAdapter(getActivity(), lettersIcon);
+
+                    gridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Toast.makeText(getActivity(), photoArr.get(position).address, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        //photosDownloadArr.add("https://firebasestorage.googleapis.com/v0/b/prisrio-5d247.appspot.com/o/f5e7bb9a-6998-45cd-a924-dfaeb3f69d59.jpg?alt=media&token=3b3d1433-1c6c-4b84-9ac4-2d86ad369e08");
+        //photosDownloadArr.add("https://firebasestorage.googleapis.com/v0/b/prisrio-5d247.appspot.com/o/f5e7bb9a-6998-45cd-a924-dfaeb3f69d59.jpg?alt=media&token=3b3d1433-1c6c-4b84-9ac4-2d86ad369e08");
         //photosDownloadArr.add("https://firebasestorage.googleapis.com/v0/b/prisrio-5d247.appspot.com/o/a83e35d5-f7aa-4795-8706-867b3124f2b6.jpg?alt=media&token=b21959d0-d19b-447c-9bba-58b8feb7db36");
         //photosDownloadArr.add("https://firebasestorage.googleapis.com/v0/b/prisrio-5d247.appspot.com/o/57df65d5-9bd1-4082-92b5-bbff2df89270.jpg?alt=media&token=c602a566-596d-42a0-8896-03909fc78b40");
         //photosDownloadArr.add("https://firebasestorage.googleapis.com/v0/b/prisrio-5d247.appspot.com/o/590c9b14-2e5f-4de9-9ce9-05b5289eee73.jpg?alt=media&token=6ef0a906-855e-4837-ac62-4bb2b9c60a63");
-
-
-
-                GridView gridView = (GridView) view.findViewById(R.id.gv_profile_imagegallery);
-                gridView.setAdapter(new profileGridViewAdapter(getActivity(), photosDownloadArr,lettersIcon));
-                //profileGridViewAdapter adapter = new profileGridViewAdapter(getActivity(), lettersIcon);
-
-                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-
-
-
-
-
-
-
 
         // Inflate the layout for this fragment
         return view;

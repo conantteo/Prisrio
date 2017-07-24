@@ -25,8 +25,8 @@
 
         <ImageView
             android:id="@+id/img_postphoto_snappicture"
-            android:layout_width="297dp"
-            android:layout_height="208dp"
+            android:layout_width="244dp"
+            android:layout_height="144dp"
             android:layout_marginTop="16dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -37,10 +37,9 @@
             android:id="@+id/bn_postphoto_camera"
             android:layout_width="314dp"
             android:layout_height="47dp"
-            android:layout_marginTop="240dp"
+            android:layout_marginTop="185dp"
             android:onClick="takePicture"
             android:text="SNAP"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -88,11 +87,12 @@
             android:id="@+id/lb_postphoto_foodcategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="308dp"
+            android:layout_marginTop="307dp"
             android:text="Food Category"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0.522" />
 
         <TextView
             android:id="@+id/lb_postphoto_caption"
@@ -103,6 +103,16 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/lb_postphoto_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Location"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="261dp" />
     </android.support.constraint.ConstraintLayout>
     </ScrollView>
 </FrameLayout>

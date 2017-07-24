@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -29,7 +31,6 @@ import java.util.ArrayList;
 public class profileGridViewAdapter extends BaseAdapter{
 
     private ArrayList<String> imageArr;
-    private int intimageArr [];
     private Context context;
     private LayoutInflater inflater;
 
@@ -37,15 +38,14 @@ public class profileGridViewAdapter extends BaseAdapter{
 
 
 
-    public profileGridViewAdapter(Context context, ArrayList<String> imageArr, int[] intimageArr){
+    public profileGridViewAdapter(Context context, ArrayList<String> imageArr){
         this.context = context;
-        //this.imageArr = imageArr;
-        this.intimageArr = intimageArr;
+        this.imageArr = imageArr;
     }
 
     @Override
     public int getCount() {
-        return intimageArr.length;
+        return imageArr.size();
     }
 
     @Override
@@ -72,7 +72,14 @@ public class profileGridViewAdapter extends BaseAdapter{
 
          ImageView icon = (ImageView) gridView.findViewById(R.id.img_profileimagegallery_image);
 
-        icon.setImageResource(intimageArr[position]);
+       // icon.setImageResource(intimageArr[position]);
+
+        Glide
+                .with(context)
+                .load(imageArr.get(position))
+                .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(icon);
         /*
         URL url = null;
         try {

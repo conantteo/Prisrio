@@ -75,6 +75,8 @@ public class postphoto extends Fragment {
 
             }
         });
+        ((mainmenu)getActivity()).getCurrentLocation();
+
     }
 
     @Override

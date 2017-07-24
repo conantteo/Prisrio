@@ -1,5 +1,10 @@
 package com.prisrio.prisrio;
 
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -59,11 +64,14 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.jar.*;
 
 public class mainmenu extends AppCompatActivity {
 
@@ -78,6 +86,9 @@ public class mainmenu extends AppCompatActivity {
 
     AccessToken accessToken;
 
+    //LOCATION STUFF
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
 
     //FIREBASE AUTHENTICATION
@@ -114,12 +125,12 @@ public class mainmenu extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         //Bottom Navigation Bar
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item){
-                switch(item.getItemId()){
-                    case R.id.bottom_navigation_photo:{
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.bottom_navigation_photo: {
                         //Toast.makeText(mainmenu.this, "Action Add Clicked", Toast.LENGTH_SHORT).show();
                         //Intent main = new Intent(mainmenu.this,postphoto.class);
                         //startActivity(main);
@@ -131,7 +142,7 @@ public class mainmenu extends AppCompatActivity {
                         ft.commit();
                         break;
                     }
-                    case R.id.bottom_navigation_profile:{
+                    case R.id.bottom_navigation_profile: {
                         //Toast.makeText(mainmenu.this, "Action Add Clicked", Toast.LENGTH_SHORT).show();
                         //Intent main = new Intent(mainmenu.this,postphoto.class);
                         //startActivity(main);
@@ -152,7 +163,6 @@ public class mainmenu extends AppCompatActivity {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorGreyishBlack));
         }
-
 
 
         // Get the Intent that started this activity and extract the string
@@ -179,8 +189,72 @@ public class mainmenu extends AppCompatActivity {
         new DownloadImageTask(imageView)
                 .execute(fbProfileImage);
                 */
-    }
 
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                Log.d("Tag","LOCATION : LAT" + location.getLatitude());
+                Log.d("Tag","LOCATION : LONG" + location.getLongitude());
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                List<Address> addresses = null;
+
+                try {
+                    addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                String city = addresses.get(0).getLocality();
+                String state = addresses.get(0).getAdminArea();
+                String country = addresses.get(0).getCountryName();
+                String postalCode = addresses.get(0).getPostalCode();
+                String knownName = addresses.get(0).getFeatureName();
+                Log.d("Tag","LOCATION : country" + country);
+                Log.d("Tag","LOCATION : address" + address);
+                Log.d("Tag","LOCATION : knownName" + knownName);
+                TextView lb_location = (TextView) findViewById(R.id.lb_postphoto_location);
+                if(lb_location!=null) {
+                    lb_location.setText(address);
+                }
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+
+    }
+    public void getCurrentLocation (){
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+            return;
+        }else{
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        }
+    }
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 
@@ -318,6 +392,9 @@ public class mainmenu extends AppCompatActivity {
         EditText tb_postphoto_caption = (EditText) findViewById(R.id.tb_postphoto_caption);
         final String caption = tb_postphoto_caption.getText().toString();
 
+        TextView lb_postphoto_location = (TextView) findViewById(R.id.lb_postphoto_location);
+        final String address = lb_postphoto_location.getText().toString();
+
         Spinner ddl_postphoto_foodcategory = (Spinner) findViewById(R.id.ddl_postphoto_foodcategory);
         final String foodCategory = ddl_postphoto_foodcategory.getSelectedItem().toString();
 
@@ -349,11 +426,11 @@ public class mainmenu extends AppCompatActivity {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                //Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 //post photo
 
                 //Insert into Database
-                Photo photo = new Photo(foodCategory, caption, login.FB_ID);
+                Photo photo = new Photo(foodCategory, caption, login.FB_ID,address,downloadUrl.toString());
                 databasePhoto.child(fileName).setValue(photo);
 
                 Toast.makeText(mainmenu.this, "Your post is uploaded!", Toast.LENGTH_SHORT).show();
