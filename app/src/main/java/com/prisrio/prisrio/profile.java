@@ -40,6 +40,8 @@ import java.util.ArrayList;
 
 public class profile extends Fragment {
 
+    private Context context;
+
     CallbackManager callbackManager;
     LoginManager loginManager;
 

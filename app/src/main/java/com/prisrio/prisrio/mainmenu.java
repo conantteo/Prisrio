@@ -38,6 +38,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -46,6 +47,8 @@ import android.widget.TextView;
 import android.graphics.Typeface;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
@@ -57,6 +60,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -66,12 +70,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.jar.*;
+
+import static com.prisrio.prisrio.R.id.img_profile;
 
 public class mainmenu extends AppCompatActivity {
 
@@ -99,7 +107,7 @@ public class mainmenu extends AppCompatActivity {
 
     //FIREBASE
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    //DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
+    DatabaseReference databaseUser = FirebaseDatabase.getInstance().getReference("users");
     DatabaseReference databaseRef = database.getReference("foodcategory");
     DatabaseReference databasePhoto = FirebaseDatabase.getInstance().getReference("photos");
 
@@ -243,6 +251,8 @@ public class mainmenu extends AppCompatActivity {
                     lb_location.setText(address);
                     locationLongitude= longitude ;
                     locationLatitude=latitude ;
+                    Button bn_post = (Button) findViewById(R.id.bn_postphoto_post);
+                    bn_post.setEnabled(true);
                 }
             }
 
@@ -461,7 +471,50 @@ public class mainmenu extends AppCompatActivity {
             }
         });
     }
+    int photoPosition = 0;
 
+    public void nextPhoto(View view){
+        ImageView icon = (ImageView) findViewById(R.id.img_foodmatch_photo);
+        ImageView img_profile = (ImageView) findViewById(R.id.img_foodmatch_profile);
+        TextView lb_author = (TextView) findViewById(R.id.lb_foodmatch_author);
+        TextView lb_location = (TextView) findViewById(R.id.lb_foodmatch_location);
+        TextView lb_caption = (TextView) findViewById(R.id.lb_foodmatch_caption);
+        //true if friends of users
+        if(photoPosition>=foodmatch.friendsPhotoArr.size()){
+            photoPosition=0;
+        }
+        String friendsFBId = foodmatch.friendsPhotoArr.get(photoPosition).author;
+        String caption = foodmatch.friendsPhotoArr.get(photoPosition).caption;
+        String address = foodmatch.friendsPhotoArr.get(photoPosition).address;
+        String downloadURL = foodmatch.friendsPhotoArr.get(photoPosition).downloadURL;
+        String fbProfileImage = null;
+        try {
+            fbProfileImage = new URL("https://graph.facebook.com/" + friendsFBId + "/picture?width=500&height=500").toString();
+            for(int i=0; i<login.fbFriendsArr.size();i++) {
+                String tempId = login.fbFriendsArr.get(i).fbID;
+                if(tempId.equals(friendsFBId)){
+                    lb_author.setText(login.fbFriendsArr.get(i).name);
+                }
+            }
+            Glide
+                    .with(getApplicationContext())
+                    .load(fbProfileImage)
+                    .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(img_profile);
+            lb_caption.setText(caption);
+            lb_location.setText(address);
+            Glide
+                    .with(getApplicationContext())
+                    .load(downloadURL)
+                    .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(icon);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        photoPosition++;
+    }
 
 
 

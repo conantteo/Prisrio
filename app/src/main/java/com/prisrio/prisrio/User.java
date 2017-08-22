@@ -7,6 +7,7 @@ package com.prisrio.prisrio;
 public class User {
     //public String id;
     public String name;
+    public String fbID;
 
 
     // Default constructor required for calls to
@@ -14,6 +15,10 @@ public class User {
     public User() {
     }
 
+    public User(String name, String fbID) {
+        this.name = name;
+        this.fbID = fbID;
+    }
     public User(String name) {
         this.name = name;
     }

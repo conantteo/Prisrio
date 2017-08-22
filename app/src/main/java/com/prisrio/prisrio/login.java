@@ -38,11 +38,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class login extends AppCompatActivity {
     CallbackManager callbackManager;
@@ -70,6 +72,9 @@ public class login extends AppCompatActivity {
     //FIREBASE AUTHENTICATION
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
+    //FACEBOOK FRIENDS
+    public static ArrayList<User> fbFriendsArr = new ArrayList<User>();
 
     private VideoView videoView;
     @Override
@@ -181,7 +186,22 @@ public class login extends AppCompatActivity {
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
                         /* handle the result */
-                        Log.e(TAG,response.toString());
+                        JSONObject object = response.getJSONObject();
+                        Log.d("Tag","FACEBOOK : "+response.toString() );
+                        try {
+                            JSONArray arrayOfUsersInFriendList= object.getJSONArray("data");
+                            Log.d("Tag","FACEBOOK : "+arrayOfUsersInFriendList.toString() );
+                             /* Do something with the user list */
+                            /* ex: get first user in list, "name" */
+                            JSONObject user = arrayOfUsersInFriendList.getJSONObject(0);
+                            String usersName = user.getString("name");
+                            String fbId = user.getString("id");
+                            User fbFriendUser = new User(usersName, fbId);
+                            fbFriendsArr.add(fbFriendUser);
+                            Log.d("Tag","FACEBOOK : friend" + usersName);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
         ).executeAsync();

@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -87,7 +88,8 @@ public class postphoto extends Fragment {
         postPhotoview =  lf.inflate(R.layout.fragment_postphoto, container, false);
         img_snapppicture = (ImageView) postPhotoview.findViewById(R.id.img_postphoto_snappicture);
         TextView textView = (TextView) postPhotoview.findViewById(R.id.lb_name);
-
+        Button bn_post = (Button) postPhotoview.findViewById(R.id.bn_postphoto_post);
+        bn_post.setEnabled(false);
 
         return postPhotoview;
 
